@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ladder — Breach Ladder</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  .rank{font-family:'JetBrains Mono';color:var(--dim);}
+  .elo-val{font-family:'JetBrains Mono';color:var(--olive);font-weight:700;}
+  .wl{color:var(--dim);font-family:'JetBrains Mono';font-size:14px;}
+</style>
+</head>
+<body>
+
+<header>
+  <a class="brand" href="index.html">
+    <div class="brand-mark"></div>
+    <div class="brand-name">BREACH<em>LADDER</em></div>
+  </a>
+  <button class="nav-toggle" id="navToggle">☰</button>
+  <nav id="mainNav">
+    <a href="index.html">Home</a>
+    <a href="queue.html">Queue</a>
+    <a href="ladder.html" class="active">Ladder</a>
+    <button class="login-btn" id="loginBtn">Login with Discord</button>
+  </nav>
+</header>
+
+<section class="section">
+  <div class="section-head"><h1>Ladder</h1><span class="idx mono" id="ladderIdx"></span></div>
+  <div id="ladderContainer" class="hud-frame" style="padding:0;">
+    <div class="empty-state">Loading leaderboard…</div>
+  </div>
+</section>
+
+<footer>
+  BREACH LADDER IS A COMMUNITY PLATFORM, UNAFFILIATED WITH UBISOFT ENTERTAINMENT. TOM CLANCY'S RAINBOW SIX SIEGE IS A TRADEMARK OF UBISOFT.
+</footer>
+
+<script src="common.js"></script>
+<script>
+async function loadLeaderboard() {
+  const container = document.getElementById("ladderContainer");
+  try {
+    const res = await fetch(`${API_BASE}/leaderboard`);
+    if (!res.ok) throw new Error("bad response");
+    const rows = await res.json();
+    if (!rows.length) {
+      container.innerHTML = `<div class="empty-state">No matches played yet. The ladder fills in once results come through.</div>`;
+      return;
+    }
+    let html = `<table><thead><tr><th>Rank</th><th>Player</th><th>ELO</th><th>Record</th></tr></thead><tbody>`;
+    rows.forEach((r, i) => {
+      html += `<tr><td class="rank">${String(i + 1).padStart(2, "0")}</td><td>${r.username}</td><td class="elo-val">${r.elo}</td><td class="wl">${r.wins}W – ${r.losses}L</td></tr>`;
+    });
+    html += `</tbody></table>`;
+    container.innerHTML = html;
+    document.getElementById("ladderIdx").textContent = `/ top ${rows.length}`;
+  } catch (err) {
+    container.innerHTML = `<div class="error-state">Couldn't reach the backend at ${API_BASE}. Is it running?</div>`;
+  }
+}
+loadLeaderboard();
+</script>
+</body>
+</html>
