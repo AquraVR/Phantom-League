@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Breach Ladder — Competitive Siege</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+  <a class="brand" href="index.html">
+    <div class="brand-mark"></div>
+    <div class="brand-name">BREACH<em>LADDER</em></div>
+  </a>
+  <button class="nav-toggle" id="navToggle">☰</button>
+  <nav id="mainNav">
+    <a href="index.html" class="active">Home</a>
+    <a href="queue.html">Queue</a>
+    <a href="ladder.html">Ladder</a>
+    <button class="login-btn" id="loginBtn">Login with Discord</button>
+  </nav>
+</header>
+
+<section class="page-title">
+  <div class="eyebrow">Season 1</div>
+  <h1>Queue up.<br>Clutch out.<br>Climb.</h1>
+  <p>Custom Siege matches with flexible team sizes down to 2v1 handicaps. Voice lobbies separate each team automatically — the bot has no commands, it just builds and tears down the rooms.</p>
+</section>
+
+<section class="section">
+  <div class="section-head"><h2>Match Sequence</h2></div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;">
+    <div class="hud-frame"><div class="hud-label">01 · LOGIN</div>
+      <div style="font-family:'Rajdhani';font-size:22px;font-weight:700;margin-top:6px;">Sign in with Discord</div>
+      <div style="color:var(--dim);font-size:15px;margin-top:6px;">So we know who you are on the platform and in voice.</div>
+    </div>
+    <div class="hud-frame"><div class="hud-label">02 · QUEUE</div>
+      <div style="font-family:'Rajdhani';font-size:22px;font-weight:700;margin-top:6px;">Pick a mode</div>
+      <div style="color:var(--dim);font-size:15px;margin-top:6px;">1v1, 2v1, or whatever's active this season. Join the queue.</div>
+    </div>
+    <div class="hud-frame"><div class="hud-label">03 · LOBBY</div>
+      <div style="font-family:'Rajdhani';font-size:22px;font-weight:700;margin-top:6px;">Get your code</div>
+      <div style="color:var(--dim);font-size:15px;margin-top:6px;">Once matched, you get your own voice channel code. Your opponent gets a separate, unrelated one.</div>
+    </div>
+    <div class="hud-frame"><div class="hud-label">04 · REPORT</div>
+      <div style="font-family:'Rajdhani';font-size:22px;font-weight:700;margin-top:6px;">Play, report, climb</div>
+      <div style="color:var(--dim);font-size:15px;margin-top:6px;">Report the result when you're done. ELO updates immediately and the channels get deleted.</div>
+    </div>
+  </div>
+</section>
+
+<section class="section" style="text-align:center;">
+  <a href="queue.html" class="btn-primary" style="text-decoration:none;display:inline-block;">Find a Match</a>
+  <a href="ladder.html" class="btn-ghost" style="text-decoration:none;display:inline-block;margin-left:14px;">View Ladder</a>
+</section>
+
+<footer>
+  BREACH LADDER IS A COMMUNITY PLATFORM, UNAFFILIATED WITH UBISOFT ENTERTAINMENT. TOM CLANCY'S RAINBOW SIX SIEGE IS A TRADEMARK OF UBISOFT.
+</footer>
+
+<script src="common.js"></script>
+</body>
+</html>
