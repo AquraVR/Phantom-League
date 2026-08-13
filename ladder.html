@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ladder — Breach Ladder</title>
+<title>Ladder — Phantom League</title>
 <link rel="stylesheet" href="style.css">
 <style>
   .rank{font-family:'JetBrains Mono';color:var(--dim);}
@@ -16,14 +16,14 @@
 <header>
   <a class="brand" href="index.html">
     <div class="brand-mark"></div>
-    <div class="brand-name">BREACH<em>LADDER</em></div>
+    <div class="brand-name">PHANTOM<em>LEAGUE</em></div>
   </a>
   <button class="nav-toggle" id="navToggle">☰</button>
   <nav id="mainNav">
     <a href="index.html">Home</a>
     <a href="queue.html">Queue</a>
     <a href="ladder.html" class="active">Ladder</a>
-    <button class="login-btn" id="loginBtn">Login with Discord</button>
+    <button class="login-btn" id="loginBtn">Sign In with Discord</button>
   </nav>
 </header>
 
@@ -35,8 +35,23 @@
 </section>
 
 <footer>
-  BREACH LADDER IS A COMMUNITY PLATFORM, UNAFFILIATED WITH UBISOFT ENTERTAINMENT. TOM CLANCY'S RAINBOW SIX SIEGE IS A TRADEMARK OF UBISOFT.
+  PHANTOM LEAGUE IS A COMMUNITY PLATFORM, UNAFFILIATED WITH UBISOFT ENTERTAINMENT. TOM CLANCY'S RAINBOW SIX SIEGE IS A TRADEMARK OF UBISOFT.
 </footer>
+
+<div class="modal-overlay" id="nameModalOverlay">
+  <div class="modal-box">
+    <button class="modal-close" id="nameModalClose" aria-label="Close">&times;</button>
+    <div class="modal-label">Almost There</div>
+    <div class="modal-title">Your Ubisoft display name</div>
+    <div class="modal-sub">We need this to match your Discord account to your in-game stats.</div>
+    <form id="nameModalForm">
+      <input type="text" class="modal-input" id="ubisoftNameInput" placeholder="e.g. Thermite_Rush" autocomplete="off">
+      <div class="modal-actions">
+        <button type="submit" class="btn-primary" style="flex:1;">Confirm</button>
+      </div>
+    </form>
+  </div>
+</div>
 
 <script src="common.js"></script>
 <script>
