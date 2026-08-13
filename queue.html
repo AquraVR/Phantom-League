@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Queue — Breach Ladder</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  .modes{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:28px;}
+  .mode-card{cursor:pointer;transition:border-color .15s;}
+  .mode-card.selected::before,.mode-card.selected::after{border-color:var(--amber);}
+  .mode-title{font-family:'Rajdhani';font-size:22px;color:var(--fog);margin:6px 0 6px;font-weight:700;text-transform:uppercase;}
+  .mode-desc{color:var(--dim);font-size:14px;line-height:1.4;}
+  .queue-status{margin-top:18px;font-family:'JetBrains Mono';font-size:14px;color:var(--dim);text-align:center;min-height:20px;}
+  .lobby-code-box{
+    margin-top:18px;font-family:'JetBrains Mono';font-size:24px;color:var(--olive);font-weight:700;
+    letter-spacing:1px;padding:16px 18px;background:var(--void);border:1px dashed var(--line);
+    text-align:center;display:none;word-break:break-all;
+  }
+  .lobby-code-box.visible{display:block;}
+  .lobby-note{font-size:13px;color:var(--dim);text-align:center;margin-top:10px;}
+</style>
+</head>
+<body>
+
+<header>
+  <a class="brand" href="index.html">
+    <div class="brand-mark"></div>
+    <div class="brand-name">BREACH<em>LADDER</em></div>
+  </a>
+  <button class="nav-toggle" id="navToggle">☰</button>
+  <nav id="mainNav">
+    <a href="index.html">Home</a>
+    <a href="queue.html" class="active">Queue</a>
+    <a href="ladder.html">Ladder</a>
+    <button class="login-btn" id="loginBtn">Login with Discord</button>
+  </nav>
+</header>
+
+<section class="section">
+  <div class="section-head"><h1>Queue</h1><span class="idx mono" id="modesIdx"></span></div>
+
+  <div class="modes" id="modesList">
+    <div class="empty-state">Loading modes from backend…</div>
+  </div>
+
+  <div class="hud-frame">
+    <div class="hud-label">LOBBY STATUS</div>
+    <button class="btn-primary" id="queueBtn" disabled style="width:100%;margin-top:4px;">Select a mode above</button>
+    <div class="queue-status" id="queueStatus"></div>
+    <div class="lobby-code-box" id="lobbyCodeBox"></div>
+    <div class="lobby-note" id="lobbyNote"></div>
+  </div>
+</section>
+
+<footer>
+  BREACH LADDER IS A COMMUNITY PLATFORM, UNAFFILIATED WITH UBISOFT ENTERTAINMENT. TOM CLANCY'S RAINBOW SIX SIEGE IS A TRADEMARK OF UBISOFT.
+</footer>
+
+<script src="common.js"></script>
+<script>
+let selectedModeId = null;
+let currentDiscordId = null; // populated once Discord OAuth is wired up
+
+async function loadModes() {
+  const list = document.getElementById("modesList");
+  try {
+    const res = await fetch(`${API_BASE}/modes`);
+    if (!res.ok) throw new Error("bad response");
+    const modes = await res.json();
+    if (!modes.length) {
+      list.innerHTML = `<div class="empty-state">No modes configured yet.</div>`;
+      return;
+    }
+    list.innerHTML = "";
+    modes.forEach(mode => {
+      const card = document.createElement("div");
+      card.className = "hud-frame mode-card";
+      card.dataset.modeId = mode.id;
+      card.innerHTML = `
+        <div class="hud-label">MODE</div>
+        <div class="mode-title">${mode.name}</div>
+        <div class="mode-desc">${mode.team_a_size}v${mode.team_b_size} · ${mode.ruleset || "standard ruleset"}</div>
+      `;
+      card.addEventListener("click", () => selectMode(mode.id, card));
+      list.appendChild(card);
+    });
+    document.getElementById("modesIdx").textContent = `/ ${modes.length} active`;
+  } catch (err) {
+    list.innerHTML = `<div class="error-state">Couldn't reach the backend at ${API_BASE}. Is it running?</div>`;
+  }
+}
+
+function selectMode(modeId, cardEl) {
+  selectedModeId = modeId;
+  document.querySelectorAll(".mode-card").forEach(c => c.classList.remove("selected"));
+  cardEl.classList.add("selected");
+  const btn = document.getElementById("queueBtn");
+  btn.disabled = false;
+  btn.textContent = "Join Queue";
+  document.getElementById("queueStatus").textContent = "";
+  document.getElementById("lobbyCodeBox").classList.remove("visible");
+}
+
+async function joinQueue() {
+  if (!selectedModeId) return;
+  if (!currentDiscordId) {
+    document.getElementById("queueStatus").textContent = "Log in with Discord first.";
+    return;
+  }
+  const btn = document.getElementById("queueBtn");
+  const status = document.getElementById("queueStatus");
+  btn.disabled = true;
+  status.textContent = "Joining queue…";
+
+  try {
+    const res = await fetch(`${API_BASE}/queue/join`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ discord_id: currentDiscordId, mode_id: selectedModeId })
+    });
+    const data = await res.json();
+
+    if (data.status === "queued") {
+      status.textContent = `In queue. Waiting on ${data.waiting_for} more player(s)...`;
+      btn.disabled = false;
+      btn.textContent = "In Queue";
+    } else if (data.status === "matched") {
+      status.textContent = `Match found (#${data.match_id}). Your voice channel:`;
+      const box = document.getElementById("lobbyCodeBox");
+      box.textContent = data.team_a_code || data.team_b_code;
+      box.classList.add("visible");
+      document.getElementById("lobbyNote").textContent =
+        "This code is yours only — your opponent gets a different, unrelated one.";
+    } else {
+      status.textContent = "Something went wrong joining the queue.";
+      btn.disabled = false;
+    }
+  } catch (err) {
+    status.textContent = "Couldn't reach the backend.";
+    btn.disabled = false;
+  }
+}
+
+document.getElementById("queueBtn").addEventListener("click", joinQueue);
+loadModes();
+</script>
+</body>
+</html>
